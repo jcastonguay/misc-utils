@@ -30,7 +30,7 @@ function DoCallback(url, method, params)
 
 
 var methods = new Array(null,'',"Generic","Select");
-var callbackfunctions = new Array(null,'', "GetCookie","SetAccounSeq", "SQLSelectNValuesAllRows");
+var callbackfunctions = new Array(null,'', "GetCookie","ES_SetAccountSeq", "SQLSelectNValuesAllRows");
 var parama1s = new Array(null,'',"1","123 or 1=1", "'", "SELECT HOST_NAME()");
 var parama2s = new Array(null,'',"1","123 or 1=1", "'", "SELECT HOST_NAME()");
 

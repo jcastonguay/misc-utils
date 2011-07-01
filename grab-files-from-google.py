@@ -3,7 +3,7 @@
 
 # Silly little script to help pull down full sets of files from google
 
-# Sloppy use of flags to help deal with odd results from google
+# Sloppy use of isfirsts to help deal with odd results from google
 
 import time
 import sys
@@ -16,42 +16,47 @@ import fileinput
 
 
 filetype="xlsx"
-directory="/tmp/allofthe"+filetype+"/"
-i=0
-flag=0
+page=0
+isfirst=0 #Flag to see if query gets cut off
 timeout=10
 socket.setdefaulttimeout(timeout)
 
 dictionarylist="./american-english"
 
+resultsperpage = 100
+numberofpages = 10
 
-checkres =""
+playnicebase = 5
+playnicerandom = 10
+
+firstresult =""
 
 try:
   for salt in fileinput.input(dictionarylist):
     sys.stderr.write("trial "+salt)
-#    salt = str( int(random.random()*26) +ord("A") ) + str( int(random.random()*26) +ord("A") )
     gs = GoogleSearch("filetype:"+filetype+" "+salt.strip())
-    gs.results_per_page = 100
-    flag = 0
-    for i in range(10):
-      if (flag == 1):
+    gs.results_per_page = resultsperpage
+    isfirst = 0
+    for page in range(numberofpages): 
+      if (isfirst == 1): # Go to next salt if first result is the same on two pages (means we ran out of results)
 	break
-      r = 10*random.random() + 5
-      sys.stderr.write("loop "+str(i)+" sleeping for "+str(r)+"\n")
-      time.sleep(i)
+      playnice = playnicerandom*random.random() + playnicebase
+      sys.stderr.write("page "+str(page)+" sleeping for "+str(playnice)+"\n")
+      time.sleep(playnice)
       results = gs.get_results()
-      flag = 0
+      isfirst = 0
       for res in results:
-	flag+=1
-        if (flag == 1):
-          if checkres == res.url.encode("utf8"):
+	isfirst+=1
+
+        if (isfirst == 1):  # If the first result of the page is the same as the first result of the next
+                            # page, assume its just the same results for each page of the query and skip.
+          if firstresult == res.url.encode("utf8"):
 	    break
-	  checkres = res.url.encode("utf8")
+	  firstresult = res.url.encode("utf8")
+
 	print res.url.encode("utf8")
-      sys.stderr.write("flag: "+str(flag)+"\n")
       sys.stdout.flush()
-      if (flag == 0):
+      if (isfirst == 0):  #no results on the page, try the next query
 	break
 
 except SearchError, e:

@@ -65,8 +65,9 @@ function $E(data) {
 
 function pp(s)
 {
-//	GM_log
-	console.log(s);
+	GM_log(s);
+
+/*
 	document.createTextNode(s);
 
 	var element = $E([{
@@ -75,7 +76,7 @@ function pp(s)
 	    id:'debug'},
            s
 	]);
-
+*/
 }
 
 
